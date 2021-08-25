@@ -1,21 +1,18 @@
-// import 'dart:convert' as convert;
-// import 'package:http/http.dart' as http;
-
 import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:my_app/model/user/user_response.dart';
+import 'package:http/http.dart' as http;
+import 'package:my_app/model/user_response.dart';
 
 class Requests {
   var url = "https://611b5f2b22020a00175a443a.mockapi.io/User";
 
   Future<List<UserResponse>> getUser() async {
-    Response response = await get(Uri.parse(url));
+    var response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
       List<UserResponse> users =
           body.map((dynamic item) => UserResponse.fromJson(item)).toList();
-      print("OK");
+      print(users.length);
+
       return users;
     } else {
       throw "Can't get ";
@@ -28,7 +25,7 @@ class Requests {
     required String email,
     required String password,
   }) async {
-    Response response = await post(Uri.parse(url), body: {
+    var response = await http.post(Uri.parse(url), body: {
       "phone": phone,
       "name": name,
       "password": password,
