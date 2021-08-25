@@ -1,10 +1,6 @@
-// import 'dart:convert' as convert;
-// import 'package:http/http.dart' as http;
-
 import 'dart:convert';
-
 import 'package:http/http.dart';
-import 'package:my_app/model/user/user_response.dart';
+import 'package:my_app/model/user_response.dart';
 
 class Requests {
   var url = "https://611b5f2b22020a00175a443a.mockapi.io/User";
@@ -15,7 +11,8 @@ class Requests {
       List<dynamic> body = jsonDecode(response.body);
       List<UserResponse> users =
           body.map((dynamic item) => UserResponse.fromJson(item)).toList();
-      print("OK");
+      print(users.length);
+
       return users;
     } else {
       throw "Can't get ";

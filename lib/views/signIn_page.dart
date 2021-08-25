@@ -13,35 +13,45 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   TextEditingController email = TextEditingController(text: "");
   TextEditingController password = TextEditingController(text: "");
+  final formKey = GlobalKey<FormState>();
 
   Widget build(BuildContext context) {
-    // final login = Provider.of<Login>(context);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Login()),
       ],
-      child: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.blue.shade600,
-          body: SingleChildScrollView(
-            reverse: false,
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  label(),
-                  emailInput(),
-                  passInput(),
-                  forgotText(),
-                  checkbox(),
-                  btnLogin(),
-                  orText(),
-                  icon(),
-                  signUpText(),
-                ],
+      child: Form(
+        key: formKey,
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.blue.shade600,
+            body: SingleChildScrollView(
+              reverse: false,
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                      Color.fromRGBO(116, 176, 243, 1),
+                      Color.fromRGBO(51, 132, 224, 1),
+                    ])),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    label(),
+                    emailInput(),
+                    passInput(),
+                    forgotText(),
+                    checkbox(),
+                    btnLogin(),
+                    orText(),
+                    icon(),
+                    signUpText(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -122,8 +132,13 @@ class _SignInPageState extends State<SignInPage> {
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () =>
-            context.read<Login>().submitLogin(email.text, password.text),
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            context.read<Login>().submitLogin(email.text, password.text);
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.read<Login>().notification)));
+          }
+        },
         shape: const StadiumBorder(),
         color: Colors.white,
         splashColor: Colors.blue[900],
@@ -267,7 +282,12 @@ class _SignInPageState extends State<SignInPage> {
             // onFieldSubmitted: onSubmitted,
             controller: controller,
             obscureText: isShowText,
-            // validator: validator,
+            validator: (val) {
+              if (val?.isEmpty ?? true) {
+                return 'Không được để trống';
+              }
+              return null;
+            },
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -289,29 +309,5 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
-  }
-
-  void submitLogin() {
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: true,
-    //   builder: (BuildContext context) {
-    //     return Align(
-    //       alignment: Alignment.bottomCenter,
-    //       child: Container(
-    //         height: 50,
-    //         child: new CircularProgressIndicator(
-    //           backgroundColor: Colors.red,
-    //         ),
-    //         margin: EdgeInsets.only(bottom: 320, left: 12, right: 12),
-    //         decoration: BoxDecoration(
-    //           color: Colors.white,
-    //           borderRadius: BorderRadius.circular(40),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-    print("da an");
   }
 }

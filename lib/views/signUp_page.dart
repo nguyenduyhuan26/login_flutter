@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
-
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -16,31 +15,44 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController phone = TextEditingController(text: "");
   TextEditingController password = TextEditingController(text: "");
   TextEditingController passwordComfirm = TextEditingController(text: "");
+  final formKey = GlobalKey<FormState>();
 
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Register()),
       ],
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.blue.shade600,
-          body: SingleChildScrollView(
-            reverse: false,
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  label(),
-                  nameInput(),
-                  phoneInput(),
-                  emailInput(),
-                  passInput(),
-                  confirmPassInput(),
-                  btnRegister(),
-                  signInText(),
-                ],
+      child: Form(
+        key: formKey,
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.blue.shade600,
+            body: SingleChildScrollView(
+              reverse: false,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.fromRGBO(116, 176, 243, 1),
+                        Color.fromRGBO(51, 132, 224, 1),
+                      ]),
+                ),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    label(),
+                    nameInput(),
+                    phoneInput(),
+                    emailInput(),
+                    passInput(),
+                    confirmPassInput(),
+                    btnRegister(),
+                    signInText(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -55,11 +67,13 @@ class _SignUpPageState extends State<SignUpPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () {
-          context.read<Register>().register(
-              phone: phone.text,
-              name: name.text,
-              email: email.text,
-              password: password.text);
+          if (formKey.currentState!.validate()) {
+            context.read<Register>().register(
+                phone: phone.text,
+                name: name.text,
+                email: email.text,
+                password: password.text);
+          }
         },
         shape: const StadiumBorder(),
         color: Colors.white,
@@ -182,9 +196,6 @@ class _SignUpPageState extends State<SignUpPage> {
     required String text,
     required Icon icon,
     bool isShowText = false,
-    // required FormFieldValidator<String>? validator,
-    // required void Function(String)? onSubmitted,
-    // required void Function()? onTap,
   }) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
@@ -198,10 +209,14 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ),
           TextFormField(
-            // onFieldSubmitted: onSubmitted,
             controller: controller,
             obscureText: isShowText,
-            // validator: validator,
+            validator: (val) {
+              if (val?.isEmpty ?? true) {
+                return 'Không được để trống';
+              }
+              return null;
+            },
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -209,8 +224,6 @@ class _SignUpPageState extends State<SignUpPage> {
               filled: true,
               fillColor: Colors.blue.shade300,
               prefixIcon: InkWell(
-                // onTap: onTap,
-
                 child: icon,
               ),
               hintText: "$text",

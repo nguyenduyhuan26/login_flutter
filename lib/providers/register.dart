@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/http/request.dart';
+import 'package:flutter/foundation.dart';
+import 'package:my_app/model/request.dart';
 
 class Register with ChangeNotifier {
   Requests requests = Requests();
